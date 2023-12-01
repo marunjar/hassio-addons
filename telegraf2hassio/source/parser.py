@@ -161,8 +161,8 @@ class host():
         self.parent_listener = parent_listener
 
         self.info = {}
-        self.info["identifiers"] = "bridge"
-        self.info["model"] = "your_bridge"
+        self.info["identifiers"] = "bridge_" + self.name
+        self.info["model"] = "Telegraf 2 Home Assistant Bridge"
         self.info["name"] = self.name
         self.info["sw_version"] = VERSION
         self.info["manufacturer"] = "telegraf2ha"
