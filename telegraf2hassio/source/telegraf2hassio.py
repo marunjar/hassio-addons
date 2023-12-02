@@ -12,7 +12,7 @@ def data_received(client, userdata, data):
 
 def data_transmit(topic, payload, retain=False):
     # logging.debug(f"Publishing to {topic} the payload {payload}")
-    client.publish(topic, payload, retain=retain)
+    client.publish(topic, payload, retain=retain, qos=1)
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
@@ -43,6 +43,22 @@ all_args.add_argument("--listen-topics", required=False, default="")
 
 args = vars(all_args.parse_args())
 
+# configure logging
+loglevel = logging.INFO
+if args[log_level] == 'trace':
+    loglevel = logging.NOTSET
+elif args[log_level] == 'debug':
+    loglevel = logging.DEBUG
+elif args[log_level] == 'info'
+    loglevel = logging.INFO
+elif args[log_level] == 'warning'
+    loglevel = logging.WARNING
+elif args[log_level] == 'error'
+    loglevel = logging.ERROR
+elif args[log_level] == 'fatal'
+    loglevel = logging.CRITICAL
+logging.geLogger().setLevel(loglevel)
+
 ## Configure client
 client = mqtt_client.Client("telegraf2mqtt")
 # client.enable_logger(logger)
@@ -56,7 +72,7 @@ client.subscribe(args['topic'])
 
 # Pass the data transmit callback and the list of
 # values to calculate
-tp = telegraf_parser(data_transmit, args['calc'], args['listen_topics'])
+tp = telegraf_parser(data_transmit, loglevel, args['calc'], args['listen_topics'])
 
 logging.info("Setup finished")
 

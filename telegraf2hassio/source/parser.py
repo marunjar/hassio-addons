@@ -41,7 +41,8 @@ class calc_measurement():
 
 
 class telegraf_parser():
-    def __init__(self, transmit_callback, cm_str_list, listen_topics) -> None:
+    def __init__(self, transmit_callback, loglevel, cm_str_list, listen_topics) -> None:
+        logging.getLogger().setLevel(loglevel)
         self.hosts = {}
         self.cm_dict = {}
         self.transmit_callback = transmit_callback
@@ -52,7 +53,10 @@ class telegraf_parser():
             self.cm_dict[uid] = calc_measurement(uid)
         for t in listen_topics.split(","):
             # Initialize a dict with the desired calculated values UIDs
-            self.lt_list += [re.compile(t)]
+            try
+                self.lt_list += [re.compile(t)]
+            except Exception as e:
+                logging.error(f"Error compiling pattern for listen_topics {t}: {e}")
 
     def __get_host_name(self, jdata):
         # Build the host name of the current meassage
