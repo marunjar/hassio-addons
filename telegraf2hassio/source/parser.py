@@ -219,7 +219,7 @@ class measurement():
         self.clazz = self.parseClazz(self.name)
         self.enabled = False
         for prog in lt_list:
-            if prog.search(topic) != None:
+            if prog.search(self.topic) != None:
                 self.enabled = True
                 break
 
