@@ -223,11 +223,11 @@ class measurement():
 
     def parseUnit(self, name):
         if (("_bytes" in name) or ("bytes_" in name)):
-            return "B"
+            return 'B'
         if ("percent" in name):
-            return "%"
+            return '%'
         if ("_temp_c" in name):
-            return "°C"
+            return '°C'
         else:
             return None
 
