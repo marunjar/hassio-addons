@@ -123,7 +123,7 @@ class telegraf_parser():
         for measurement_name in self.__get_measurements_list(jdata):
             _, is_new_m = current_sensor.add_measurement(measurement_name, self.lt_list)
 
-        if is_new_s && current_sensor.enabled:
+        if is_new_s and current_sensor.enabled:
             logging.info(f"Added sensor: {self.print(jdata)}")
 
         return (is_new_s | is_new_h | is_new_m)
