@@ -57,7 +57,7 @@ elif args['log_level'] == 'error':
     loglevel = logging.ERROR
 elif args['log_level'] == 'fatal':
     loglevel = logging.CRITICAL
-logging.geLogger().setLevel(loglevel)
+logging.getLogger().setLevel(loglevel)
 
 ## Configure client
 client = mqtt_client.Client("telegraf2mqtt")
