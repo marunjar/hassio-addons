@@ -45,17 +45,17 @@ args = vars(all_args.parse_args())
 
 # configure logging
 loglevel = logging.INFO
-if args[log_level] == 'trace':
+if args['log_level'] == 'trace':
     loglevel = logging.NOTSET
-elif args[log_level] == 'debug':
+elif args['log_level'] == 'debug':
     loglevel = logging.DEBUG
-elif args[log_level] == 'info':
+elif args['log_level'] == 'info':
     loglevel = logging.INFO
-elif args[log_level] == 'warning':
+elif args['log_level'] == 'warning':
     loglevel = logging.WARNING
-elif args[log_level] == 'error':
+elif args['log_level'] == 'error':
     loglevel = logging.ERROR
-elif args[log_level] == 'fatal':
+elif args['log_level'] == 'fatal':
     loglevel = logging.CRITICAL
 logging.geLogger().setLevel(loglevel)
 
