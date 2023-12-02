@@ -1,6 +1,6 @@
 ---
 name: Telegraf2Hassio
-version: 0.1.14
+version: 0.1.15
 slug: telegraf2hassio
 description: Turn telegraf metrics into hassio self-discovered sensors
 arch:
@@ -36,7 +36,7 @@ schema:
   mqtt_user: str
   mqtt_pass: str
   telegraf_topic: str
-  calc_rate: str
+  calc_rate: str?
   log_level: list(trace|debug|info|notice|warning|error|fatal)
-  listen_topics: str
+  listen_topics: str?
 

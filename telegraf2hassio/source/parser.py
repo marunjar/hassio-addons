@@ -66,9 +66,10 @@ class telegraf_parser():
         # add more detailed name from tags
         ext_name = jdata['tags'].get('name', "")
         if ext_name: 
-            if sensor_name in ext_name:
-                sensor_name = ext++name
-            else if sensor_name != ext_name:
+            if ext_name in sensor_name:
+            elif sensor_name in ext_name:
+                sensor_name = ext_name
+            elif sensor_name != ext_name:
                 sensor_name += ext_name
 
         # Use properties names to differentiate measurements with same name
