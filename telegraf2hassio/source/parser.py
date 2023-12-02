@@ -71,7 +71,7 @@ class telegraf_parser():
             elif sensor_name in ext_name:
                 sensor_name = ext_name
             elif sensor_name != ext_name:
-                sensor_name += ext_name
+                sensor_name = sensor_name + "_" + ext_name
 
         # Use properties names to differentiate measurements with same name
         if len(jdata['tags']) > 1:
