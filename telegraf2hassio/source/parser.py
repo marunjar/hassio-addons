@@ -210,7 +210,7 @@ class measurement():
             "state_topic": f"{STATE_PREFIX}/{self.parent_sensor.parent_host.name}/{self.parent_sensor.name}/data",
             "device_class": self.clazz,
             "unit_of_measurement": self.unit,
-            "icon": self.getIcon(self.parent_sensor.name),
+            "icon": self.getIcon(f"{self.parent_sensor.name[0:-3]}_{self.name}"),
             "device": self.parent_sensor.parent_host.info,
             "unique_id": self.uid,
             "platform": "mqtt",
@@ -242,6 +242,8 @@ class measurement():
             return None
 
     def getIcon(self, name):
+        if ("_temp_c" in name):
+            return "mdi:thermometer"
         if ("cpu_" in name):
             return "mdi:cpu-64-bit"
         if ("mem_" in name):
