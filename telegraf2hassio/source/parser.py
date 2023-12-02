@@ -3,6 +3,7 @@ import json
 import logging
 import hashlib
 from copy import deepcopy
+import re
 
 VERSION = "0.1"
 HA_PREFIX = "homeassistant/sensor"
@@ -52,7 +53,8 @@ class telegraf_parser():
 
     def __get_host_name(self, jdata):
         # Build the host name of the current meassage
-        return jdata['tags']['host']
+        host = jdata['tags']['host']
+        return re.sub('[a-zA-Z0-9_-]', '_', host)
 
     def __get_sensor_name(self, jdata):
         # Build up the sensor name
