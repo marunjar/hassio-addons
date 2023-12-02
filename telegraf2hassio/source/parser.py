@@ -202,12 +202,15 @@ class measurement():
         self.topic = f"{HA_PREFIX}/{self.parent_sensor.parent_host.name}/{self.parent_sensor.name}_{self.name}"
         self.uid = f"{self.parent_sensor.parent_host.name}_{self.parent_sensor.name}_{self.name}"
         self.unit = parseUnit(self.name)
+        self.clazz = parseClazz(self.name)
 
         config_payload = {
             # "~": self.topic,
             "name": f"{self.parent_sensor.parent_host.name}_{self.parent_sensor.name[0:-3]}_{self.name}",
             "state_topic": f"{STATE_PREFIX}/{self.parent_sensor.parent_host.name}/{self.parent_sensor.name}/data",
+            "device_class": self.clazz,
             "unit_of_measurement": self.unit,
+            "icon": getIcon(name),
             "device": self.parent_sensor.parent_host.info,
             "unique_id": self.uid,
             "platform": "mqtt",
@@ -225,5 +228,37 @@ class measurement():
             return "%"
         if ("_temp_c" in name):
             return "°C"
+        else
+            return ""
+
+    def parseClazz(name) -> str:
+        if (("_bytes" in name) or ("bytes_" in name)):
+            return "data_size"
+        if ("percent" in name):
+            return ""
+        if ("_temp_c" in name):
+            return "temperature"
+        else
+            return ""
+
+    def getIcon(name) -> str:
+        if ("_cpu_" in name):
+            return "mdi:cpu-64-bit"
+        if ("_mem_" in name):
+            return "mdi:memory"
+        if ("_disk_" in name):
+            return "mdi:harddisk"
+        if ("_diskio_" in name):
+            return "mdi:harddisk"
+        if ("_net_" in name):
+            return "mdi:lan"
+        if ("_pf_" in name):
+            return "mdi:lan"
+        if ("_smart_attribute_" in name):
+            return "mdi:harddisk-plus"
+        if ("_smart_device_" in name):
+            return "mdi:harddisk-plus"
+        if ("_zfs_" in name):
+            return "mdi:harddisk-plus"
         else
             return ""
