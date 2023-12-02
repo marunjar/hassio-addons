@@ -183,7 +183,7 @@ class host():
         self.info["sw_version"] = VERSION
         self.info["manufacturer"] = "telegraf2ha"
         self.enabled = False
-        logging.debug(f"Created host: {self}")
+        logging.debug(f"Created host: {self.name}")
 
     def add_sensor(self, sensor_name):
         # To create the sensor name, also check for extra tags (for the case of disks for example)
@@ -202,7 +202,7 @@ class sensor():
         self.measurements = {}
         self.parent_host = parent_host
         self.enabled = False
-        logging.debug(f"Created sensor: {self}")
+        logging.debug(f"Created sensor: {self.name}")
 
     def add_measurement(self, measurement_name, lt_list):
         current_measurement = self.measurements.get(measurement_name)
@@ -247,7 +247,7 @@ class measurement():
             # If it is a new measumente, announce it to hassio
             self.parent_sensor.parent_host.parent_listener.transmit_callback(f"{self.topic}/config", json.dumps(config_payload), retain=False)
         
-        logging.debug(f"Created measurement: {self}")
+        logging.debug(f"Created measurement: {self.name}, {self.topic}, enabled={self.enabled}")
 
     def parseUnit(self, name):
         if (("_bytes" in name) or ("bytes_" in name)):
