@@ -1,6 +1,6 @@
 ---
 name: Telegraf2Hassio
-version: 0.1.23
+version: 0.1.24
 slug: telegraf2hassio
 description: Turn telegraf metrics into hassio self-discovered sensors
 arch:
