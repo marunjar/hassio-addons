@@ -122,10 +122,9 @@ class telegraf_parser():
         # Add unknown measurements to each sensor 
         for measurement_name in self.__get_measurements_list(jdata):
             _, is_new_m = current_sensor.add_measurement(measurement_name, self.lt_list)
-            
-            if is_new_m:
-                uid = self.__get_unique_id(jdata, measurement_name)
-                logging.info(f"Added measurement UID: {uid}")
+
+        if is_new_s && current_sensor.enabled:
+            logging.info(f"Added sensor: {self.print(jdata)}")
 
         return (is_new_s | is_new_h | is_new_m)
 
@@ -143,9 +142,6 @@ class telegraf_parser():
         topic_data = f"{STATE_PREFIX}/{host_name}/{sensor_name}/data"
 
         self.transmit_callback(topic_data, json.dumps(jdata['fields']))
-
-        if is_new:
-            logging.info(f"Added sensor: {self.print(jdata)}")
 
         return is_new
 
@@ -182,6 +178,8 @@ class host():
         self.info["name"] = self.name
         self.info["sw_version"] = VERSION
         self.info["manufacturer"] = "telegraf2ha"
+        self.enabled = False
+        logging.debug(f"Created host: {self}")
 
     def add_sensor(self, sensor_name):
         # To create the sensor name, also check for extra tags (for the case of disks for example)
@@ -199,6 +197,8 @@ class sensor():
         self.name = name
         self.measurements = {}
         self.parent_host = parent_host
+        self.enabled = False
+        logging.debug(f"Created sensor: {self}")
 
     def add_measurement(self, measurement_name, lt_list):
         current_measurement = self.measurements.get(measurement_name)
@@ -221,6 +221,8 @@ class measurement():
         for prog in lt_list:
             if prog.search(self.topic) != None:
                 self.enabled = True
+                parent_sensor.enabled = True
+                parent_sensor.parent_host.enabled = True
                 break
 
         config_payload = {
@@ -240,6 +242,8 @@ class measurement():
         if (self.enabled):
             # If it is a new measumente, announce it to hassio
             self.parent_sensor.parent_host.parent_listener.transmit_callback(f"{self.topic}/config", json.dumps(config_payload), retain=False)
+        
+        logging.debug(f"Created measurement: {self}")
 
     def parseUnit(self, name):
         if (("_bytes" in name) or ("bytes_" in name)):
