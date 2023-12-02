@@ -52,7 +52,7 @@ class telegraf_parser():
             self.cm_dict[uid] = calc_measurement(uid)
         for t in listen_topics.split(","):
             # Initialize a dict with the desired calculated values UIDs
-            self.lt_list.add(re.compile(t))
+            self.lt_list += [re.compile(t)]
 
     def __get_host_name(self, jdata):
         # Build the host name of the current meassage
