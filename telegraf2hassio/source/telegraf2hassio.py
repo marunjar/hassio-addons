@@ -39,6 +39,7 @@ all_args.add_argument("--port", required=False, default=1883)
 all_args.add_argument("--topic", required=False, default="telegraf/#")
 all_args.add_argument("--calc", required=False, default="")
 all_args.add_argument("--log-level", required=False, default="info")
+all_args.add_argument("--listen-topics", required=False, default="")
 
 args = vars(all_args.parse_args())
 
@@ -55,7 +56,7 @@ client.subscribe(args['topic'])
 
 # Pass the data transmit callback and the list of
 # values to calculate
-tp = telegraf_parser(data_transmit, args['calc'])
+tp = telegraf_parser(data_transmit, args['calc'], args['listen_topics'])
 
 logging.info("Setup finished")
 

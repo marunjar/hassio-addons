@@ -1,6 +1,6 @@
 ---
 name: Telegraf2Hassio
-version: 0.1.13
+version: 0.1.14
 slug: telegraf2hassio
 description: Turn telegraf metrics into hassio self-discovered sensors
 arch:
@@ -29,6 +29,7 @@ options:
   telegraf_topic: telegraf/#
   calc_rate: host_sensor_measurement_1,host_sensor_measurement_2
   log_level: info
+  listen_topics: null
 schema:
   mqtt_broker: str
   mqtt_port: int
@@ -37,4 +38,5 @@ schema:
   telegraf_topic: str
   calc_rate: str
   log_level: list(trace|debug|info|notice|warning|error|fatal)
+  listen_topics: str
 

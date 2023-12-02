@@ -41,15 +41,18 @@ class calc_measurement():
 
 
 class telegraf_parser():
-    def __init__(self, transmit_callback, cm_str_list) -> None:
+    def __init__(self, transmit_callback, cm_str_list, listen_topics) -> None:
         self.hosts = {}
         self.cm_dict = {}
         self.transmit_callback = transmit_callback
-
+        self.lt_list = []
 
         for uid in cm_str_list.split(","):
             # Initialize a dict with the desired calculated values UIDs
             self.cm_dict[uid] = calc_measurement(uid)
+        for t in listen_topics.split(","):
+            # Initialize a dict with the desired calculated values UIDs
+            self.lt_list.add(re.compile(t))
 
     def __get_host_name(self, jdata):
         # Build the host name of the current meassage
@@ -60,8 +63,17 @@ class telegraf_parser():
         # Build up the sensor name
         sensor_name = jdata['name']
 
+        # add more detailed name from tags
+        ext_name = jdata['tags'].get('name', "")
+        if ext_name: 
+            if sensor_name in ext_name:
+                sensor_name = ext++name
+            else if sensor_name != ext_name:
+                sensor_name += ext_name
+
         # Use properties names to differentiate measurements with same name
-        if len(jdata['tags']) > 1: 
+        if len(jdata['tags']) > 1:
+            sensor_name += ('_' + jdata['tags'].get('cpu', "")).rstrip("_")
             sensor_name += ('_' + jdata['tags'].get('device', "")).rstrip("_")
             sensor_name += ('_' + jdata['tags'].get('interface', "")).rstrip("_")
             sensor_name += ('_' + jdata['tags'].get('feature', "")).rstrip("_")
@@ -107,7 +119,7 @@ class telegraf_parser():
         current_sensor, is_new_s = current_host.add_sensor(sensor_name)
         # Add unknown measurements to each sensor 
         for measurement_name in self.__get_measurements_list(jdata):
-            _, is_new_m = current_sensor.add_measurement(measurement_name)
+            _, is_new_m = current_sensor.add_measurement(measurement_name, self.lt_list)
             
             if is_new_m:
                 uid = self.__get_unique_id(jdata, measurement_name)
@@ -186,23 +198,28 @@ class sensor():
         self.measurements = {}
         self.parent_host = parent_host
 
-    def add_measurement(self, measurement_name):
+    def add_measurement(self, measurement_name, lt_list):
         current_measurement = self.measurements.get(measurement_name)
         if current_measurement is None:
-            current_measurement = measurement(self, measurement_name)
+            current_measurement = measurement(self, measurement_name, lt_list)
             self.measurements[measurement_name] = current_measurement
-            return current_measurement, True
+            return current_measurement, current_measurement.enabled
         
         return current_measurement, False
 
 class measurement():    
-    def __init__(self, parent_sensor, name) -> None:
+    def __init__(self, parent_sensor, name, lt_list) -> None:
         self.name = name
         self.parent_sensor = parent_sensor
         self.topic = f"{HA_PREFIX}/{self.parent_sensor.parent_host.name}/{self.parent_sensor.name}_{self.name}"
         self.uid = f"{self.parent_sensor.parent_host.name}_{self.parent_sensor.name}_{self.name}"
         self.unit = self.parseUnit(self.name)
         self.clazz = self.parseClazz(self.name)
+        self.enabled = False
+        for prog in lt_list:
+            if prog.search(topic) != None:
+                self.enabled = True
+                break
 
         config_payload = {
             # "~": self.topic,
@@ -218,16 +235,17 @@ class measurement():
             "value_template": f"{{{{ value_json.{self.name} | round(2) }}}}",
         }
 
-        # If it is a new measumente, announce it to hassio
-        self.parent_sensor.parent_host.parent_listener.transmit_callback(f"{self.topic}/config", json.dumps(config_payload), retain=True)
+        if (self.enabled):
+            # If it is a new measumente, announce it to hassio
+            self.parent_sensor.parent_host.parent_listener.transmit_callback(f"{self.topic}/config", json.dumps(config_payload), retain=False)
 
     def parseUnit(self, name):
         if (("_bytes" in name) or ("bytes_" in name)):
-            return 'B'
+            return "B"
         if ("percent" in name):
-            return '%'
+            return "%"
         if ("_temp_c" in name):
-            return '°C'
+            return "°C"
         else:
             return None
 

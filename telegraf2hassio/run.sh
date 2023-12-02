@@ -23,6 +23,7 @@ MQTT_PASS=$(bashio::config 'mqtt_pass')
 TELEGRAF_TOPIC=$(bashio::config 'telegraf_topic')
 CALC_RATE=$(bashio::config 'calc_rate')
 LOG_LEVEL=$(bashio::config 'log_level')
+LISTEN_TOPICS=$(bashio::config 'listen_topics')
 
 # Enforces required env variables
 required_vars=(MQTT_BROKER MQTT_USER MQTT_PASS TELEGRAF_TOPIC)
@@ -40,4 +41,5 @@ python3 /opt/telegraf2hassio/telegraf2hassio.py \
                     --pass=${MQTT_PASS}        \
                     --topic=${TELEGRAF_TOPIC}  \
                     --calc=${CALC_RATE}        \
-                    --log-level=${LOG_LEVEL}
+                    --log-level=${LOG_LEVEL}   \
+                    --listen-topics=${LISTEN_TOPICS}
