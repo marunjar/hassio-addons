@@ -159,6 +159,7 @@ class telegraf_parser():
 class host():
     def __init__(self, parent_listener, name) -> None:
         self.name = name
+        self.
         self.sensors = {}
         self.parent_listener = parent_listener
 
@@ -201,12 +202,13 @@ class measurement():
         self.parent_sensor = parent_sensor
         self.topic = f"{HA_PREFIX}/{self.parent_sensor.parent_host.name}/{self.parent_sensor.name}_{self.name}"
         self.uid = f"{self.parent_sensor.parent_host.name}_{self.parent_sensor.name}_{self.name}"
+        self.unit = parseUnit(self.name)
 
         config_payload = {
             # "~": self.topic,
             "name": f"{self.parent_sensor.parent_host.name}_{self.parent_sensor.name[0:-3]}_{self.name}",
             "state_topic": f"{STATE_PREFIX}/{self.parent_sensor.parent_host.name}/{self.parent_sensor.name}/data",
-            "unit_of_measurement": "",
+            "unit_of_measurement": self.unit,
             "device": self.parent_sensor.parent_host.info,
             "unique_id": self.uid,
             "platform": "mqtt",
@@ -216,3 +218,13 @@ class measurement():
 
         # If it is a new measumente, announce it to hassio
         self.parent_sensor.parent_host.parent_listener.transmit_callback(f"{self.topic}/config", json.dumps(config_payload), retain=True)
+
+    def parseUnit(name) -> str:
+        if (("_bytes" in name) or ("bytes_" in name)):
+            return "B"
+        if ("percent" in name):
+            return "%"
+        if ("_temp_c" in name):
+            return "°C"
+        else
+            return ""
