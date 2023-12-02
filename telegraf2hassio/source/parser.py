@@ -5,7 +5,7 @@ import hashlib
 from copy import deepcopy
 import re
 
-VERSION = "0.1"
+VERSION = "0.2"
 HA_PREFIX = "homeassistant/sensor"
 STATE_PREFIX = "telegraf2ha"
 
@@ -210,7 +210,7 @@ class measurement():
             "state_topic": f"{STATE_PREFIX}/{self.parent_sensor.parent_host.name}/{self.parent_sensor.name}/data",
             "device_class": self.clazz,
             "unit_of_measurement": self.unit,
-            "icon": self.getIcon(name),
+            "icon": self.getIcon(self.parent_sensor.name),
             "device": self.parent_sensor.parent_host.info,
             "unique_id": self.uid,
             "platform": "mqtt",
