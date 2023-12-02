@@ -53,7 +53,7 @@ class telegraf_parser():
             self.cm_dict[uid] = calc_measurement(uid)
         for t in listen_topics.split(","):
             # Initialize a dict with the desired calculated values UIDs
-            try
+            try:
                 self.lt_list += [re.compile(t)]
             except Exception as e:
                 logging.error(f"Error compiling pattern for listen_topics {t}: {e}")
