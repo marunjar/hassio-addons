@@ -54,7 +54,7 @@ class telegraf_parser():
     def __get_host_name(self, jdata):
         # Build the host name of the current meassage
         host = jdata['tags']['host']
-        return re.sub('[a-zA-Z0-9_-]', '_', host)
+        return re.sub("[^a-zA-Z0-9_-]", "_", host)
 
     def __get_sensor_name(self, jdata):
         # Build up the sensor name
