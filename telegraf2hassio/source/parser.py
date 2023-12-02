@@ -159,7 +159,6 @@ class telegraf_parser():
 class host():
     def __init__(self, parent_listener, name) -> None:
         self.name = name
-        self.
         self.sensors = {}
         self.parent_listener = parent_listener
 
