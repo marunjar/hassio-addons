@@ -242,23 +242,23 @@ class measurement():
             return None
 
     def getIcon(self, name):
-        if ("_cpu_" in name):
+        if ("cpu_" in name):
             return "mdi:cpu-64-bit"
-        if ("_mem_" in name):
+        if ("mem_" in name):
             return "mdi:memory"
-        if ("_disk_" in name):
+        if ("disk_" in name):
             return "mdi:harddisk"
-        if ("_diskio_" in name):
+        if ("diskio_" in name):
             return "mdi:harddisk"
-        if ("_net_" in name):
+        if ("net_" in name):
             return "mdi:lan"
-        if ("_pf_" in name):
+        if ("pf_" in name):
             return "mdi:lan"
-        if ("_smart_attribute_" in name):
+        if ("smart_attribute_" in name):
             return "mdi:harddisk-plus"
-        if ("_smart_device_" in name):
+        if ("smart_device_" in name):
             return "mdi:harddisk-plus"
-        if ("_zfs_" in name):
+        if ("zfs_" in name):
             return "mdi:harddisk-plus"
         else:
             return None
