@@ -67,6 +67,7 @@ class telegraf_parser():
         ext_name = jdata['tags'].get('name', "")
         if ext_name: 
             if ext_name in sensor_name:
+                pass
             elif sensor_name in ext_name:
                 sensor_name = ext_name
             elif sensor_name != ext_name:
