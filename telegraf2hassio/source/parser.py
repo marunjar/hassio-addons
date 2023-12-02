@@ -221,7 +221,7 @@ class measurement():
         # If it is a new measumente, announce it to hassio
         self.parent_sensor.parent_host.parent_listener.transmit_callback(f"{self.topic}/config", json.dumps(config_payload), retain=True)
 
-    def parseUnit(name):
+    def parseUnit(self, name):
         if (("_bytes" in name) or ("bytes_" in name)):
             return "B"
         if ("percent" in name):
@@ -231,7 +231,7 @@ class measurement():
         else:
             return None
 
-    def parseClazz(name):
+    def parseClazz(self, name):
         if (("_bytes" in name) or ("bytes_" in name)):
             return "data_size"
         if ("percent" in name):
@@ -241,7 +241,7 @@ class measurement():
         else:
             return None
 
-    def getIcon(name):
+    def getIcon(self, name):
         if ("_cpu_" in name):
             return "mdi:cpu-64-bit"
         if ("_mem_" in name):
