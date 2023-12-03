@@ -118,7 +118,7 @@ class telegraf_parser():
         return jdata
 
 
-    def announce_new(self, host_name, sensor_name, jdata) -> int:
+    def announce_new(self, host_name, sensor_name, jdata):
         # Add current host if unknown
         current_host, is_new_h = self.add_host(host_name)
         # Add unknown sensors to host
@@ -130,7 +130,7 @@ class telegraf_parser():
         if is_new_s and current_sensor.enabled:
             logging.info(f"Added sensor: {self.print(jdata)}")
 
-        return (is_new_s | is_new_h | is_new_m)
+        return (is_new_s | is_new_h | is_new_m), current_sensor
 
     def send(self, data):
         # Once all the unknown sensors are announced,
@@ -141,13 +141,11 @@ class telegraf_parser():
         host_name = self.__get_host_name(jdata)
         sensor_name = self.__get_sensor_name(jdata)
 
-        is_new = self.announce_new(host_name, sensor_name, jdata)
+        is_new, current_sensor = self.announce_new(host_name, sensor_name, jdata)
 
-        topic_data = f"{STATE_PREFIX}/{host_name}/{sensor_name}/data"
-
-        self.transmit_callback(topic_data, json.dumps(jdata['fields']))
-
-        return is_new
+        if current_sensor.enabled:
+            topic_data = f"{STATE_PREFIX}/{host_name}/{sensor_name}/data"
+            self.transmit_callback(topic_data, json.dumps(jdata['fields']))
 
     def print(self, jdata):
         # jdata = json.loads(data.payload.decode())
