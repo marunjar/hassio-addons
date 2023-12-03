@@ -219,8 +219,9 @@ class measurement():
         self.parent_sensor = parent_sensor
         self.topic = f"{HA_PREFIX}/{self.parent_sensor.parent_host.name}/{self.parent_sensor.name}_{self.name}"
         self.uid = f"{self.parent_sensor.parent_host.name}_{self.parent_sensor.name}_{self.name}"
-        self.unit = self.parseUnit(self.name)
-        self.clazz = self.parseClazz(self.name)
+        self.full_name = f"{self.parent_sensor.name[0:-3]}_{self.name}"
+        self.unit = self.parseUnit(self.full_name)
+        self.clazz = self.parseClazz(self.full_name)
         self.enabled = False
         for prog in lt_list:
             if prog.search(self.topic) != None:
@@ -231,11 +232,11 @@ class measurement():
 
         config_payload = {
             # "~": self.topic,
-            "name": f"{self.parent_sensor.parent_host.name}_{self.parent_sensor.name[0:-3]}_{self.name}",
+            "name": f"{self.parent_sensor.parent_host.name}_{self.full_name}",
             "state_topic": f"{STATE_PREFIX}/{self.parent_sensor.parent_host.name}/{self.parent_sensor.name}/data",
             "device_class": self.clazz,
             "unit_of_measurement": self.unit,
-            "icon": self.getIcon(f"{self.parent_sensor.name[0:-3]}_{self.name}"),
+            "icon": self.getIcon(self.full_name),
             "device": self.parent_sensor.parent_host.info,
             "unique_id": self.uid,
             "platform": "mqtt",
