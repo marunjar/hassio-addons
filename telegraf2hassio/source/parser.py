@@ -144,7 +144,7 @@ class telegraf_parser():
         is_new, current_sensor = self.announce_new(host_name, sensor_name, jdata)
 
         if current_sensor.enabled:
-            current_sensor.announce()
+            # current_sensor.announce()
             topic_data = f"{STATE_PREFIX}/{host_name}/{sensor_name}/data"
             self.transmit_callback(topic_data, json.dumps(jdata['fields']))
 
