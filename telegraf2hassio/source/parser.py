@@ -144,6 +144,7 @@ class telegraf_parser():
         is_new, current_sensor = self.announce_new(host_name, sensor_name, jdata)
 
         if current_sensor.enabled:
+            current_sensor.announce()
             topic_data = f"{STATE_PREFIX}/{host_name}/{sensor_name}/data"
             self.transmit_callback(topic_data, json.dumps(jdata['fields']))
 
@@ -210,6 +211,11 @@ class sensor():
             return current_measurement, current_measurement.enabled
         
         return current_measurement, False
+    
+    def announce(self):
+        for measurement_name, current_measurement in self.measurements:
+            current_measurement.announce()
+    
 
 class measurement():    
     def __init__(self, parent_sensor, name, lt_list) -> None:
@@ -227,26 +233,30 @@ class measurement():
                 parent_sensor.enabled = True
                 parent_sensor.parent_host.enabled = True
                 break
+        logging.debug(f"Created measurement: {self.name}, {self.topic}, enabled={self.enabled}")
 
-        config_payload = {
-            # "~": self.topic,
-            "name": f"{self.parent_sensor.parent_host.name}_{self.full_name}",
-            "state_topic": f"{STATE_PREFIX}/{self.parent_sensor.parent_host.name}/{self.parent_sensor.name}/data",
-            "device_class": self.clazz,
-            "unit_of_measurement": self.unit,
-            "icon": self.getIcon(self.full_name),
-            "device": self.parent_sensor.parent_host.info,
-            "unique_id": self.uid,
-            "platform": "mqtt",
-            # Make the template such that we can use the telegraph topic straight
-            "value_template": f"{{{{ value_json.{self.name} | round(2) }}}}",
-        }
+        self.announce()
 
+
+    def announce(self):
         if (self.enabled):
+            config_payload = {
+                # "~": self.topic,
+                "name": f"{self.parent_sensor.parent_host.name}_{self.full_name}",
+                "state_topic": f"{STATE_PREFIX}/{self.parent_sensor.parent_host.name}/{self.parent_sensor.name}/data",
+                "device_class": self.clazz,
+                "unit_of_measurement": self.unit,
+                "icon": self.getIcon(self.full_name),
+                "device": self.parent_sensor.parent_host.info,
+                "unique_id": self.uid,
+                "platform": "mqtt",
+                # Make the template such that we can use the telegraph topic straight
+                "value_template": f"{{{{ value_json.{self.name} | round(2) }}}}",
+            }
+
             # If it is a new measumente, announce it to hassio
             self.parent_sensor.parent_host.parent_listener.transmit_callback(f"{self.topic}/config", json.dumps(config_payload), retain=False)
-        
-        logging.debug(f"Created measurement: {self.name}, {self.topic}, enabled={self.enabled}")
+            logging.debug(f"Announce measurement: {self.name}, {self.topic}")
 
     def parseUnit(self, name):
         if (("_bytes" in name) or ("bytes_" in name)):
